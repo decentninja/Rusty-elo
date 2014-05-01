@@ -57,11 +57,21 @@ fn law_of_total_probability() {
 }
 
 #[test]
-fn it_updates_rating() {
-	let mut a = Player{name: ~"A", rating: 1500.0};
+fn draw_between_same_rated_players() {
+	let mut a = ~Player{name: ~"A", rating: 1500.0};
+	let mut b = ~Player{name: ~"B", rating: 1500.0};
+	a.battle(b, 1.0, 1.0);
+	if a.rating != b.rating {
+		fail!("{} {}", a.rating, b.rating);
+	}
+}
+
+#[test]
+fn draw_between_diffrent_rated_players() {
+	let mut a = ~Player{name: ~"A", rating: 1500.0};
 	let mut b = ~Player{name: ~"B", rating: 100.0};
-	a.battle(b, 3.0, 0.0);
-	if !(a.rating > 1500.0) {
+	a.battle(b, 1.0, 1.0);
+	if !(a.rating < 1500.0 && b.rating > 100.0) {
 		fail!();
 	}
 }
