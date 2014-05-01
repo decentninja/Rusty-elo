@@ -15,34 +15,34 @@ use std::os::{args};
 
 fn main() {
 	let (help, ops) = parse_args();
-	handle_help();
-	let filename: &str = if !ops.free.is_empty() {
+	let filename: &str = if !ops.free.is_empty() && !ops.opt_present("h") {
         (*ops.free.get(0)).clone()
     } else {
-        print_usage();
+        println!("{}", help);
         return;
     };
     // TODO load players
     println!("Loading {}", filename);
-    handle_end();
-    handle_add();
-    handle_start();
-    handle_matchmake();
-    handle_list();
+    handle_create(&ops);
+    handle_end(&ops);
+    handle_add(&ops);
+    handle_start(&ops);
+    handle_matchmake(&ops);
+    handle_list(&ops);
 }
 
-fn handle_help() {
-	if ops.opt_present("h") {
-		print_usage();
-		return
+fn handle_create(ops: &Matches) {
+	if ops.opt_present("c") {
+		let dbname = ops.opt_str("c");
+		// TODO Create new db
+		println!("Create db {}", dbname);
 	}
 }
 
-fn handle_end() {
+fn handle_end(ops: &Matches) {
 	if ops.opt_present("e") {
     	let v = ops.free.clone();
     	if v.len() != 4 {
-    		print_usage();
     		return;
     	}
     	let (name, ascore, bscore) = (v.get(1), v.get(2), v.get(3));
@@ -52,7 +52,7 @@ fn handle_end() {
     }
 }
 
-fn handle_add() {
+fn handle_add(ops: &Matches) {
 	if ops.opt_present("a") {
     	let name = ops.opt_str("a");
     	// TODO add
@@ -60,11 +60,10 @@ fn handle_add() {
     }
 }
 
-fn handle_start() {
+fn handle_start(ops: &Matches) {
 	if ops.opt_present("s") {
     	let v = ops.free.clone();
     	if v.len() != 3 {
-    		print_usage();
     		return;
     	}    	
     	let (aname, bname) = (v.get(1), v.get(2));
@@ -73,25 +72,21 @@ fn handle_start() {
     }
 }
 
-fn handle_matchmake() {
+fn handle_matchmake(ops: &Matches) {
     if ops.opt_present("m") {
     	// TODO matchmake
     	println!("Matchmake!");
     }
 }
 
-fn handle_list() {
+fn handle_list(ops: &Matches) {
     if ops.opt_present("l") {
     	// TODO list
     	println!("List");
     }
 }
 
-fn print_usage() {
-	println!("rusty-elo <database> --list | --add <name> | ..."); // TODO
-}
-
-fn parse_args() -> Matches {
+fn parse_args() -> (~str, Matches) {
 	let opts = [
 		optflag(
 			"l",
@@ -102,7 +97,13 @@ fn parse_args() -> Matches {
 			"a",
 			"add",
 			"add user <name>",
-			"NAME"
+			""
+		),
+		optopt(
+			"c",
+			"create",
+			"create new database <name>",
+			""
 		),
 		optflag(
 			"s",
@@ -125,9 +126,13 @@ fn parse_args() -> Matches {
 			"print this help menu"
 		)
 	];
-
 	(
-		usage(opts),
+		usage("
+ELO implementation
+by Andreas linn
+https://en.wikipedia.org/wiki/Elo_rating_system
+
+rusty-elo <database> [options]", opts),
 		getopts(args().tail(), opts).unwrap()
 	)
 }
