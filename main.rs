@@ -5,7 +5,6 @@
  */
 #![feature(globs)]
 
-
 extern crate getopts;
 use getopts::*;
 use std::os::{args};
@@ -15,11 +14,8 @@ use std::os::{args};
 //mod player;
 
 fn main() {
-	let ops = parse_args();
-	if ops.opt_present("h") {
-		print_usage();
-		return
-	}
+	let (help, ops) = parse_args();
+	handle_help();
 	let filename: &str = if !ops.free.is_empty() {
         (*ops.free.get(0)).clone()
     } else {
@@ -28,7 +24,22 @@ fn main() {
     };
     // TODO load players
     println!("Loading {}", filename);
-    if ops.opt_present("e") {
+    handle_end();
+    handle_add();
+    handle_start();
+    handle_matchmake();
+    handle_list();
+}
+
+fn handle_help() {
+	if ops.opt_present("h") {
+		print_usage();
+		return
+	}
+}
+
+fn handle_end() {
+	if ops.opt_present("e") {
     	let v = ops.free.clone();
     	if v.len() != 4 {
     		print_usage();
@@ -39,12 +50,18 @@ fn main() {
     	// TODO end game
     	println!("End game {} {} {}", name, ascore, bscore);
     }
+}
+
+fn handle_add() {
 	if ops.opt_present("a") {
     	let name = ops.opt_str("a");
     	// TODO add
     	println!("Add {}", name);
     }
-    if ops.opt_present("s") {
+}
+
+fn handle_start() {
+	if ops.opt_present("s") {
     	let v = ops.free.clone();
     	if v.len() != 3 {
     		print_usage();
@@ -54,10 +71,16 @@ fn main() {
     	// TODO start
     	println!("Match between {} and {}", aname, bname);
     }
+}
+
+fn handle_matchmake() {
     if ops.opt_present("m") {
     	// TODO matchmake
     	println!("Matchmake!");
     }
+}
+
+fn handle_list() {
     if ops.opt_present("l") {
     	// TODO list
     	println!("List");
@@ -69,7 +92,7 @@ fn print_usage() {
 }
 
 fn parse_args() -> Matches {
-	getopts(args().tail(), [
+	let opts = [
 		optflag(
 			"l",
 			"list",
@@ -101,5 +124,10 @@ fn parse_args() -> Matches {
 			"help",
 			"print this help menu"
 		)
-	]).unwrap()
+	];
+
+	(
+		usage(opts),
+		getopts(args().tail(), opts).unwrap()
+	)
 }
