@@ -126,13 +126,14 @@ fn parse_args() -> (~str, Matches) {
 			"print this help menu"
 		)
 	];
-	(
-		usage("
+	let help = "
 ELO implementation
 by Andreas linn
 https://en.wikipedia.org/wiki/Elo_rating_system
 
-rusty-elo <database> [options]", opts),
+rusty-elo <database> [options]";
+	(
+		usage(help, opts),
 		getopts(args().tail(), opts).unwrap()
 	)
 }
