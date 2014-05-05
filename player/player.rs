@@ -2,7 +2,7 @@ use elo::elo;
 
 pub struct Player {
 	name: ~str,
-	elo: elo::Elo
+	elo: Elo
 }
 
 pub fn new(name: ~str) -> Player {

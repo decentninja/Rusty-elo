@@ -1,3 +1,1 @@
-mod player {
-	
-}
+mod player;
