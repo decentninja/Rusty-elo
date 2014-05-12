@@ -11,6 +11,12 @@ mod elo {
 
 
 #[test]
-fn create_player() {
-	let player = player::new(~"Andreas");
+fn matchmake() {
+	let lobby = player::new();
+	lobby.create("Mark");
+	lobby.create("Daneil");
+	let (a, _) = lobby.match();
+	if a.name != "Mark" {
+		fail!();
+	}
 }

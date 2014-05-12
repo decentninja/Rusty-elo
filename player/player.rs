@@ -1,15 +1,21 @@
-use elo::elo;
+extern crate collections;
 
-pub struct Player {
-	name: ~str,
-	elo: Elo
+use elo::elo::Elo;
+use collections::HashMap;
+
+struct Lobby {
+	players: HashMap<&str, ~Elo>
 }
 
-pub fn new(name: ~str) -> Player {
-	Player {
-		name: name,
-		elo: elo::Elo {
-			rating: 1500.0
-		}
+impl Lobby {
+	fn create(&self, name:&str) {
+		self.players.insert(name, Elo{rating: 1500});
 	}
 }
+
+pub fn new() -> Lobby {
+	Lobby {
+		players: vec![]
+	}
+}
+
